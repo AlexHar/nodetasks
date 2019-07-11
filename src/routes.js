@@ -31,4 +31,11 @@ routes.put("/projects/:id", (req, res) => {
   return res.json(project);
 });
 
+routes.delete("/projects/:id", (req, res) => {
+  const { id } = req.params;
+
+  projects.splice(id, 1);
+  res.send();
+});
+
 export default routes;
