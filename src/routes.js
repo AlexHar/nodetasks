@@ -21,4 +21,14 @@ routes.post("/projects", (req, res) => {
   res.json(project);
 });
 
+routes.put("/projects/:id", (req, res) => {
+  const { title } = req.body;
+  const { id } = req.params;
+
+  const project = projects.find(p => p.id == id);
+
+  project.title = title;
+  return res.json(project);
+});
+
 export default routes;
