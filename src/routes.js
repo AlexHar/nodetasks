@@ -2,7 +2,29 @@ import { Router } from "express";
 
 const routes = new Router();
 
+let requests = 0;
 const projects = [];
+
+//Validations need create middleware route
+
+function verifyProjectId(req, res, next) {
+  const { id } = req.params;
+  const existId = projects.find(p => p.id == id);
+  if (!existId) {
+    return res.status(400).json({ error: "Project not found" });
+  }
+  return next();
+}
+
+function logRequests(req, res, next) {
+  requests++;
+
+  console.log(`Requests number: ${requests}`);
+
+  return next();
+}
+
+routes.use(logRequests);
 
 routes.get("/projects", (req, res) => {
   return res.json(projects);
@@ -21,7 +43,7 @@ routes.post("/projects", (req, res) => {
   res.json(project);
 });
 
-routes.put("/projects/:id", (req, res) => {
+routes.put("/projects/:id", verifyProjectId, (req, res) => {
   const { title } = req.body;
   const { id } = req.params;
 
@@ -31,14 +53,16 @@ routes.put("/projects/:id", (req, res) => {
   return res.json(project);
 });
 
-routes.delete("/projects/:id", (req, res) => {
+routes.delete("/projects/:id", verifyProjectId, (req, res) => {
   const { id } = req.params;
 
-  projects.splice(id, 1);
+  const project = projects.find(p => p.id == id);
+
+  projects.splice(project, 1);
   res.send();
 });
 
-routes.post("/projects/:id/tasks", (req, res) => {
+routes.post("/projects/:id/tasks", verifyProjectId, (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
 
