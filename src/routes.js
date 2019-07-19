@@ -38,4 +38,14 @@ routes.delete("/projects/:id", (req, res) => {
   res.send();
 });
 
+routes.post("/projects/:id/tasks", (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
+
+  const project = projects.find(p => p.id == id);
+
+  project.tasks.push(title);
+  return res.json(projects);
+});
+
 export default routes;
